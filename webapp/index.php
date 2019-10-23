@@ -1,36 +1,16 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+$url = "http://52.14.156.85/api/tasks.php";
 
-$dbconnecterror = FALSE;
-$dbh = NULL;
-$dbReadError = FALSE;
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-require_once 'credentials.php';
-
-try{
-	
-	$conn_string = "mysql:host=".$dbserver.";dbname=".$db;
-	
-	$dbh= new PDO($conn_string, $dbusername, $dbpassword);
-	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}catch(Exception $e){
-	$dbconnecterror = TRUE;
-}
-
-if (!$dbconnecterror) {
-	
-	try {
-		$sql = "SELECT * FROM doList";
-		$stmt = $dbh->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-	} catch (PDOException $e) {
-		$dbReadError = TRUE;
-	}
-
-}
+//Execute Curl Request
+$response  = curl_exec($ch);
+$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 ?>
 <!doctype html>
 <html lang="en">
@@ -53,8 +33,8 @@ if (!$dbconnecterror) {
 		<a href="index.php"><h1 id="siteName">doIT</h1></a>
 		<hr>
 
-			<?php if(isset($result)) { ?>
-				<?php foreach($result as $item){ ?>
+			<?php if($httpcode == 200) { ?>
+				<?php foreach(json_decode($response, true) as $item){ ?>
 					<div class="list">
 						<form method="POST" action="edit.php" style="display: inline-block">
 							<input type="hidden" 	name="listID" value="<?php echo $item["listID"];?>" >
@@ -82,14 +62,10 @@ if (!$dbconnecterror) {
 				</form>
 			</div>
 			
-			<?php if ($dbconnecterror) { ?>
+			
+			<?php if ($httpcode != 200) { ?>
 			<div class="error">
-				Uh oh! There was an error connecting to the database. Please check your connection settings and try again.
-			</div>
-			<?php } ?>
-			<?php if ($dbReadError) { ?>
-			<div class="error">
-				Uh oh! There was an error reading the to do list from the database. Please check your connection settings and try again.
+				Uh oh! There was an error reading the to do list.
 			</div>
 			<?php } ?>
 			<?php if (array_key_exists('error', $_GET)) { ?>

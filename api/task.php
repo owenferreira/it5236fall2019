@@ -2,7 +2,7 @@
 // Declare the credentials to the database
 $dbconnecterror = false;
 $dbh = NULL;
-require_once '/var/www/html/credentials.php';
+require_once 'credentials.php';
 try{
 
     $conn_string = "mysql:host=".$dbserver.";dbname=".$db;

@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == "PUT") {
     }
     if (array_key_exists('completed', $task)) {
 
-        $complete = $task["completed"];
+        $complete = $task["completed"] ? 1 : 0;
 	} else {
         http_response_code(400);
 
@@ -116,7 +116,7 @@ else if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 
     if (array_key_exists('completed', $task)) {
-        $complete = $task["completed"];
+        $complete = $task["completed"] ? 1 : 0;
 	} else {
         http_response_code(400);
 		echo "no completion status";

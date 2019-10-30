@@ -25,9 +25,30 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 		$stmt = $dbh->prepare($sql);
 		$response = $stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$final =[];
+		
+		
+		foreach($result as $task){
+		//rename keys
+		
+		$task['taskName'] = $task['listItem'];
+		$task['taskDate'] = $task['finishDate'];
+		$task['completed'] = $task['complete'];
+		
+		//delete old keys
+		unset($task['listItem'], $task['finishDate'], $task['complete'],
+		
+		//store updated task
+		
+		$final[] = $task;
+		
+		
+		}
+		
+
 		
 		http_response_code(200);
-		echo json_encode($result);
+		echo json_encode($final);
 		exit();
 	} catch (PDOException $e) {
 		http_response_code(504);
@@ -39,3 +60,4 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     echo "expected get request";
     exit();
 }
+

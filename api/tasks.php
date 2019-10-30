@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 		$task['completed'] = $task['complete'];
 		
 		//delete old keys
-		unset($task['listItem'], $task['finishDate'], $task['complete'],
+		unset($task['listItem'], $task['finishDate'], $task['complete']);
 		
 		//store updated task
 		
